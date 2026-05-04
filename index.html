@@ -336,7 +336,8 @@
       try {
         estado.innerText = "Generando URL...";
 
-        const res = await fetch("https://rrz7q62fc2.execute-api.us-east-1.amazonaws.com/upload-url?nombre=" + encodeURIComponent(file.name));
+        // TODO: Reemplaza la siguiente URL con el endpoint de tu API
+        const res = await fetch("https://TU_API_URL_AQUI/upload-url?nombre=" + encodeURIComponent(file.name));
 
         const data = await res.json();
 
