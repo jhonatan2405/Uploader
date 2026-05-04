@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uploader</title>
+  
+  <!-- Favicon (Cloud Arrow Up) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 512'><path fill='%23ED5565' d='M144 480C64.5 480 0 415.5 0 336c0-62.8 40.2-116.2 96.2-135.9c-.1-2.7-.2-5.4-.2-8.1c0-88.4 71.6-160 160-160c59.3 0 111 32.2 138.7 80.2C409.9 102 428.3 96 448 96c53 0 96 43 96 96c0 12.2-2.3 23.8-6.4 34.6C596 238.4 640 290.1 640 352c0 70.7-57.3 128-128 128H144zm79-217c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l39-39V392c0 13.3 10.7 24 24 24s24-10.7 24-24V257.9l39 39c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-80-80c-9.4-9.4-24.6-9.4-33.9 0l-80 80z'/></svg>">
+
+  <!-- Google Fonts: Open Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <!-- Reproductor de Música Top Left -->
+  <div id="player-container">
+    <div id="player">
+      <div id="player-track">
+        <div id="album-name"></div>
+        <div id="track-name"></div>
+        <div id="track-time">
+          <div id="current-time"></div>
+          <div id="track-length"></div>
+        </div>
+        <div id="seek-bar-container">
+          <div id="seek-time"></div>
+          <div id="s-hover"></div>
+          <div id="seek-bar"></div>
+        </div>
+      </div>
+      <div id="player-content">
+        <div id="album-art">
+          <img src="./cover.jpg" class="active" id="_1" />
+          <div id="buffer-box">Cargando...</div>
+        </div>
+        <div id="player-controls">
+          <div class="control">
+            <div class="button" id="play-previous">
+              <i class="fas fa-backward"></i>
+            </div>
+          </div>
+          <div class="control">
+            <div class="button" id="play-pause-button">
+              <i class="fas fa-play"></i>
+            </div>
+          </div>
+          <div class="control">
+            <div class="button" id="play-next">
+              <i class="fas fa-forward"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fondo animado de lluvia -->
+  <div class="rain-bg"></div>
+
+  <!-- Nuevo Loader Animado 3D -->
+  <div id="pageLoader" class="page-loader-overlay">
+    <aside class="loader">
+      <div style="--s: 0" class="aro"></div>
+      <div style="--s: 1" class="aro"></div>
+      <div style="--s: 2" class="aro"></div>
+      <div style="--s: 3" class="aro"></div>
+      <div style="--s: 4" class="aro"></div>
+      <div style="--s: 5" class="aro"></div>
+      <div style="--s: 6" class="aro"></div>
+      <div style="--s: 7" class="aro"></div>
+      <div style="--s: 8" class="aro"></div>
+      <div style="--s: 9" class="aro"></div>
+      <div style="--s: 10" class="aro"></div>
+      <div style="--s: 11" class="aro"></div>
+      <div style="--s: 12" class="aro"></div>
+      <div style="--s: 13" class="aro"></div>
+      <div style="--s: 14" class="aro"></div>
+    </aside>
+  </div>
+
+  <!-- Link de GitHub en la Parte Superior Derecha -->
+  <div class="top-right-corner">
+    <button class="btn-github" onclick="window.open('https://github.com/jhonatan2405/Uploader', '_blank')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M7.99992 1.33331C7.12444 1.33331 6.25753 1.50575 5.4487 1.84078C4.63986 2.17581 3.90493 2.66688 3.28587 3.28593C2.03563 4.53618 1.33325 6.23187 1.33325 7.99998C1.33325 10.9466 3.24659 13.4466 5.89325 14.3333C6.22659 14.3866 6.33325 14.18 6.33325 14C6.33325 13.8466 6.33325 13.4266 6.33325 12.8733C4.48659 13.2733 4.09325 11.98 4.09325 11.98C3.78659 11.2066 3.35325 11 3.35325 11C2.74659 10.5866 3.39992 10.6 3.39992 10.6C4.06659 10.6466 4.41992 11.2866 4.41992 11.2866C4.99992 12.3 5.97992 12 6.35992 11.84C6.41992 11.4066 6.59325 11.1133 6.77992 10.9466C5.29992 10.78 3.74659 10.2066 3.74659 7.66665C3.74659 6.92665 3.99992 6.33331 4.43325 5.85998C4.36659 5.69331 4.13325 4.99998 4.49992 4.09998C4.49992 4.09998 5.05992 3.91998 6.33325 4.77998C6.85992 4.63331 7.43325 4.55998 7.99992 4.55998C8.56659 4.55998 9.13992 4.63331 9.66659 4.77998C10.9399 3.91998 11.4999 4.09998 11.4999 4.09998C11.8666 4.99998 11.6333 5.69331 11.5666 5.85998C11.9999 6.33331 12.2533 6.92665 12.2533 7.66665C12.2533 10.2133 10.6933 10.7733 9.20659 10.94C9.44659 11.1466 9.66659 11.5533 9.66659 12.1733C9.66659 13.0666 9.66659 13.7866 9.66659 14C9.66659 14.18 9.77325 14.3933 10.1133 14.3333C12.7599 13.44 14.6666 10.9466 14.6666 7.99998C14.6666 7.1245 14.4941 6.25759 14.1591 5.44876C13.8241 4.63992 13.333 3.90499 12.714 3.28593C12.0949 2.66688 11.36 2.17581 10.5511 1.84078C9.7423 1.50575 8.8754 1.33331 7.99992 1.33331V1.33331Z"
+          fill="currentcolor"></path>
+      </svg>
+      <span>View on Github</span>
+    </button>
+  </div>
+
+  <div class="page-wrapper">
+    <div class="app">
+
+      <!-- Cabecera -->
+      <div class="app-header">
+        <div class="logo-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <h1>Uploader</h1>
+        <p class="subtitle">Sube tus archivos a la nube de forma rápida y segura</p>
+      </div>
+
+      <!-- Zona Drag & Drop -->
+      <label class="drop-zone" id="dropZone">
+        <div class="drop-icon">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+        </div>
+        <span id="dropText" class="drop-text">Arrastra o selecciona un archivo</span>
+        <span class="drop-hint">Soporta cualquier formato de archivo</span>
+        <input type="file" id="file" hidden>
+      </label>
+
+      <!-- Contenedor del Preview -->
+      <div class="preview" id="preview"></div>
+
+      <!-- Botón de Subida -->
+      <button onclick="subir()" class="btn-subir">
+        <span>Subir archivo</span>
+        <i class="fa-solid fa-rocket"></i>
+      </button>
+
+      <!-- Nueva Barra de Progreso Animada -->
+      <div class="progress-wrapper" id="progressWrapper" style="display: none;">
+        <div class="progress-container">
+          <div class="progress-bar" id="progress"></div>
+          <div class="progress-text" id="progressText">0%</div>
+          <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensajes de Estado -->
+      <div class="estado-container">
+        <p id="estado" class="estado-mensaje"></p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer Animado con Texto Centrado -->
+  <footer class="footer footer-animated">
+    <div class="bubbles" id="bubblesContainer">
+      <!-- Las burbujas se generan con JS para mantener limpio el HTML -->
+    </div>
+    <div class="footer-content">
+      <div class="text-center space-y-2">
+        <p class="footer-title">Uploader © 2025</p>
+        <p class="footer-text">Sube tus archivos a la nube de forma segura y sencilla.</p>
+        <p class="footer-title">Hecho por Jhonatan Barrera, Juan Arguelles y Juan De La Espriella</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Filtro SVG para el efecto Blob de las burbujas (Oculto de forma correcta para no romper el filtro ni causar scroll) -->
+  <svg width="0" height="0" style="position: absolute;">
+    <defs>
+      <filter id="blob">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"></feGaussianBlur>
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="blob">
+        </feColorMatrix>
+      </filter>
+    </defs>
+  </svg>
+
+  <script>
+    // --- MANEJO DEL LOADER DE PÁGINA ---
+    window.addEventListener("load", () => {
+      // Un pequeño retraso para que se aprecie la animación del loader
+      setTimeout(() => {
+        document.getElementById("pageLoader").classList.add("hidden");
+      }, 500);
+    });
+
+    // --- GENERACIÓN DE BURBUJAS PARA EL FOOTER ---
+    const bubblesContainer = document.getElementById("bubblesContainer");
+    for (let i = 0; i < 128; i++) {
+      const bubble = document.createElement("div");
+      bubble.classList.add("bubble");
+      const size = 2 + Math.random() * 4;
+      const distance = 6 + Math.random() * 4;
+      const position = -5 + Math.random() * 110;
+      const time = 2 + Math.random() * 2;
+      const delay = -1 * (2 + Math.random() * 2);
+
+      bubble.style.setProperty("--size", `${size}rem`);
+      bubble.style.setProperty("--distance", `${distance}rem`);
+      bubble.style.setProperty("--position", `${position}%`);
+      bubble.style.setProperty("--time", `${time}s`);
+      bubble.style.setProperty("--delay", `${delay}s`);
+
+      bubblesContainer.appendChild(bubble);
+    }
+
+    // --- LÓGICA DE LA APP ---
+    const fileInput = document.getElementById("file");
+    const dropZone = document.getElementById("dropZone");
+    const preview = document.getElementById("preview");
+    const dropText = document.getElementById("dropText");
+
+    // drag & drop
+    dropZone.addEventListener("dragover", e => {
+      e.preventDefault();
+      dropZone.classList.add("active");
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("active");
+    });
+
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      fileInput.files = e.dataTransfer.files;
+      mostrarPreview();
+      dropZone.classList.remove("active");
+    });
+
+    fileInput.addEventListener("change", mostrarPreview);
+
+    function mostrarPreview() {
+      const file = fileInput.files[0];
+      preview.innerHTML = "";
+
+      if (!file) return;
+
+      // Animación de entrada para el preview
+      preview.classList.remove("show");
+      void preview.offsetWidth; // trigger reflow
+      preview.classList.add("show");
+
+      if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          preview.innerHTML = `
+            <div class="image-preview-container">
+              <img src="${e.target.result}" class="img-preview">
+              <div class="file-info-overlay">
+                <i class="fa-regular fa-image"></i>
+                <span class="file-name-truncate">${file.name}</span>
+              </div>
+            </div>`;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Icono dinámico según extensión
+        let iconClass = "fa-file-lines";
+        if (file.type.includes("pdf")) iconClass = "fa-file-pdf";
+        else if (file.type.includes("zip") || file.type.includes("rar")) iconClass = "fa-file-zipper";
+        else if (file.type.includes("video")) iconClass = "fa-file-video";
+        else if (file.type.includes("audio")) iconClass = "fa-file-audio";
+
+        preview.innerHTML = `
+          <div class="file-box">
+            <div class="file-icon"><i class="fa-solid ${iconClass}"></i></div>
+            <div class="file-details">
+              <div class="file-name" title="${file.name}">${file.name}</div>
+              <div class="file-size">${(file.size / 1024 / 1024).toFixed(2)} MB</div>
+            </div>
+            <div class="file-check"><i class="fa-solid fa-check-circle"></i></div>
+          </div>`;
+      }
+    }
+
+    // Observer para animar el estado y dar feedback visual sin tocar la lógica original
+    const estadoEl = document.getElementById("estado");
+    const progressEl = document.getElementById("progress");
+    const progressTextEl = document.getElementById("progressText");
+    const progressWrapper = document.getElementById("progressWrapper");
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        const text = estadoEl.innerText;
+        estadoEl.className = "estado-mensaje"; // reset clases
+
+        if (text.includes("✅")) {
+          estadoEl.classList.add("success");
+          progressEl.classList.add("success");
+          progressEl.classList.remove("active");
+          progressTextEl.innerText = "100%";
+          setTimeout(() => {
+            progressWrapper.style.display = "none";
+          }, 3000); // Ocultar después de 3s
+        } else if (text.includes("❌") || text.includes("Error") || text.includes("Selecciona")) {
+          estadoEl.classList.add("error");
+          progressEl.classList.add("error");
+          progressEl.classList.remove("active");
+          progressWrapper.style.display = "none";
+        } else if (text.includes("Subiendo") || text.includes("Generando")) {
+          estadoEl.classList.add("loading");
+          progressEl.classList.remove("success", "error");
+          progressEl.classList.add("active");
+          progressWrapper.style.display = "flex";
+
+          if (text.includes("Generando")) {
+            progressEl.style.width = "0%";
+            progressTextEl.innerText = "0%";
+          }
+        }
+      });
+    });
+    observer.observe(estadoEl, { childList: true, characterData: true, subtree: true });
+
+    // 🔥 TU LÓGICA ORIGINAL (NO TOCADA)
+    async function subir() {
+      const file = fileInput.files[0];
+      const estado = document.getElementById("estado");
+      const progress = document.getElementById("progress");
+      const progressText = document.getElementById("progressText");
+
+      if (!file) {
+        estado.innerText = "Selecciona un archivo";
+        return;
+      }
+
+      try {
+        estado.innerText = "Generando URL...";
+
+        const res = await fetch("https://rrz7q62fc2.execute-api.us-east-1.amazonaws.com/upload-url?nombre=" + encodeURIComponent(file.name));
+
+        const data = await res.json();
+
+        if (!data.url) {
+          estado.innerText = "Error obteniendo URL";
+          return;
+        }
+
+        estado.innerText = "Subiendo...";
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", data.url, true);
+
+        xhr.upload.onprogress = function (e) {
+          if (e.lengthComputable) {
+            let percent = (e.loaded / e.total) * 100;
+            progress.style.width = percent + "%";
+            progressText.innerText = Math.round(percent) + "%";
+          }
+        };
+
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            estado.innerText = "✅ Subido correctamente";
+          } else {
+            estado.innerText = "❌ Error: " + xhr.status;
+          }
+        };
+
+        xhr.send(file);
+
+      } catch (err) {
+        estado.innerText = "Error API";
+      }
+    }
+  </script>
+
+  <!-- Script Reproductor de Música -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(function () {
+      const playerTrack = $("#player-track");
+      const albumName = $("#album-name");
+      const trackName = $("#track-name");
+      const albumArt = $("#album-art");
+      const sArea = $("#seek-bar-container");
+      const seekBar = $("#seek-bar");
+      const trackTime = $("#track-time");
+      const seekTime = $("#seek-time");
+      const sHover = $("#s-hover");
+      const playPauseButton = $("#play-pause-button");
+      const tProgress = $("#current-time");
+      const tTime = $("#track-length");
+      const playPreviousTrackButton = $("#play-previous");
+      const playNextTrackButton = $("#play-next");
+      
+      const albums = ["Alright"];
+      const trackNames = ["Kendrick Lamar"];
+      const albumArtworks = ["_1"];
+      const trackUrl = ["./Alright.mp3"];
+      
+      let i = playPauseButton.find("i"),
+        seekT,
+        seekLoc,
+        seekBarPos,
+        cM,
+        ctMinutes,
+        ctSeconds,
+        curMinutes,
+        curSeconds,
+        durMinutes,
+        durSeconds,
+        playProgress,
+        bTime,
+        nTime = 0,
+        buffInterval = null,
+        tFlag = false,
+        currIndex = -1,
+        audio;
+
+      function playPause() {
+        setTimeout(function () {
+          if (audio.paused) {
+            playerTrack.addClass("active");
+            albumArt.addClass("active");
+            checkBuffering();
+            i.attr("class", "fas fa-pause");
+            audio.play();
+          } else {
+            playerTrack.removeClass("active");
+            albumArt.removeClass("active");
+            clearInterval(buffInterval);
+            albumArt.removeClass("buffering");
+            i.attr("class", "fas fa-play");
+            audio.pause();
+          }
+        }, 300);
+      }
+
+      function showHover(event) {
+        seekBarPos = sArea.offset();
+        seekT = event.clientX - seekBarPos.left;
+        seekLoc = audio.duration * (seekT / sArea.outerWidth());
+
+        sHover.width(seekT);
+
+        cM = seekLoc / 60;
+
+        ctMinutes = Math.floor(cM);
+        ctSeconds = Math.floor(seekLoc - ctMinutes * 60);
+
+        if (ctMinutes < 0 || ctSeconds < 0) return;
+
+        if (ctMinutes < 10) ctMinutes = "0" + ctMinutes;
+        if (ctSeconds < 10) ctSeconds = "0" + ctSeconds;
+
+        if (isNaN(ctMinutes) || isNaN(ctSeconds)) seekTime.text("--:--");
+        else seekTime.text(ctMinutes + ":" + ctSeconds);
+
+        seekTime.css({ left: seekT, "margin-left": "-21px" }).fadeIn(0);
+      }
+
+      function hideHover() {
+        sHover.width(0);
+        seekTime
+          .text("00:00")
+          .css({ left: "0px", "margin-left": "0px" })
+          .fadeOut(0);
+      }
+
+      function playFromClickedPos() {
+        audio.currentTime = seekLoc;
+        seekBar.width(seekT);
+        hideHover();
+      }
+
+      function updateCurrTime() {
+        nTime = new Date();
+        nTime = nTime.getTime();
+
+        if (!tFlag) {
+          tFlag = true;
+          trackTime.addClass("active");
+        }
+
+        curMinutes = Math.floor(audio.currentTime / 60);
+        curSeconds = Math.floor(audio.currentTime - curMinutes * 60);
+
+        durMinutes = Math.floor(audio.duration / 60);
+        durSeconds = Math.floor(audio.duration - durMinutes * 60);
+
+        playProgress = (audio.currentTime / audio.duration) * 100;
+
+        if (curMinutes < 10) curMinutes = "0" + curMinutes;
+        if (curSeconds < 10) curSeconds = "0" + curSeconds;
+
+        if (durMinutes < 10) durMinutes = "0" + durMinutes;
+        if (durSeconds < 10) durSeconds = "0" + durSeconds;
+
+        if (isNaN(curMinutes) || isNaN(curSeconds)) tProgress.text("00:00");
+        else tProgress.text(curMinutes + ":" + curSeconds);
+
+        if (isNaN(durMinutes) || isNaN(durSeconds)) tTime.text("00:00");
+        else tTime.text(durMinutes + ":" + durSeconds);
+
+        if (
+          isNaN(curMinutes) ||
+          isNaN(curSeconds) ||
+          isNaN(durMinutes) ||
+          isNaN(durSeconds)
+        )
+          trackTime.removeClass("active");
+        else trackTime.addClass("active");
+
+        seekBar.width(playProgress + "%");
+
+        if (playProgress == 100) {
+          i.attr("class", "fa fa-play");
+          seekBar.width(0);
+          tProgress.text("00:00");
+          albumArt.removeClass("buffering").removeClass("active");
+          clearInterval(buffInterval);
+        }
+      }
+
+      function checkBuffering() {
+        clearInterval(buffInterval);
+        buffInterval = setInterval(function () {
+          if (nTime == 0 || bTime - nTime > 1000) albumArt.addClass("buffering");
+          else albumArt.removeClass("buffering");
+
+          bTime = new Date();
+          bTime = bTime.getTime();
+        }, 100);
+      }
+
+      function selectTrack(flag) {
+        if (flag == 0 || flag == 1) ++currIndex;
+        else --currIndex;
+
+        if (currIndex > -1 && currIndex < albumArtworks.length) {
+          if (flag == 0) i.attr("class", "fa fa-play");
+          else {
+            albumArt.removeClass("buffering");
+            i.attr("class", "fa fa-pause");
+          }
+
+          seekBar.width(0);
+          trackTime.removeClass("active");
+          tProgress.text("00:00");
+          tTime.text("00:00");
+
+          currAlbum = albums[currIndex];
+          currTrackName = trackNames[currIndex];
+          currArtwork = albumArtworks[currIndex];
+
+          audio.src = trackUrl[currIndex];
+
+          nTime = 0;
+          bTime = new Date();
+          bTime = bTime.getTime();
+
+          if (flag != 0) {
+            audio.play();
+            playerTrack.addClass("active");
+            albumArt.addClass("active");
+
+            clearInterval(buffInterval);
+            checkBuffering();
+          }
+
+          albumName.text(currAlbum);
+          trackName.text(currTrackName);
+          albumArt.find("img.active").removeClass("active");
+          $("#" + currArtwork).addClass("active");
+
+        } else {
+          if (flag == 0 || flag == 1) --currIndex;
+          else ++currIndex;
+        }
+      }
+
+      function initPlayer() {
+        audio = new Audio();
+
+        selectTrack(0);
+
+        audio.loop = false;
+
+        playPauseButton.on("click", playPause);
+
+        sArea.mousemove(function (event) {
+          showHover(event);
+        });
+
+        sArea.mouseout(hideHover);
+
+        sArea.on("click", playFromClickedPos);
+
+        $(audio).on("timeupdate", updateCurrTime);
+
+        playPreviousTrackButton.on("click", function () {
+          selectTrack(-1);
+        });
+        playNextTrackButton.on("click", function () {
+          selectTrack(1);
+        });
+      }
+
+      initPlayer();
+    });
+  </script>
+
+</body>
+
+</html>
